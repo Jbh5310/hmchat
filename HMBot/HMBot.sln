@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.26430.6
+# Visual Studio 14
+VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HMBot", "HMBot\HMBot.csproj", "{A8BA1066-5695-4D71-ABB4-65E5A5E0C3D4}"
 EndProject
@@ -10,6 +10,10 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HMBot.Services", "HMBot.Services\HMBot.Services.csproj", "{F562E42A-EBA3-4918-BC84-8424C307C50D}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HMBot.Web", "HMBot.Web\HMBot.Web.csproj", "{CC728D14-2321-4B9C-AED6-EB4A92512596}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Calendar.ASP.NET.MVC5_Exam", "..\..\..\google-api-dotnet-client-samples-master\google-api-dotnet-client-samples-master\Calendar.ASP.NET.MVC5\Calendar.ASP.NET.MVC5_Exam.csproj", "{8BCE976E-62FE-415E-91EB-7E6522806FE8}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ICalTest", "..\..\ICalTest\ICalTest\ICalTest.csproj", "{DE641557-18C9-4E48-BAC8-AF0B456090A7}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -33,6 +37,14 @@ Global
 		{CC728D14-2321-4B9C-AED6-EB4A92512596}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CC728D14-2321-4B9C-AED6-EB4A92512596}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{CC728D14-2321-4B9C-AED6-EB4A92512596}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8BCE976E-62FE-415E-91EB-7E6522806FE8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8BCE976E-62FE-415E-91EB-7E6522806FE8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8BCE976E-62FE-415E-91EB-7E6522806FE8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8BCE976E-62FE-415E-91EB-7E6522806FE8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DE641557-18C9-4E48-BAC8-AF0B456090A7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DE641557-18C9-4E48-BAC8-AF0B456090A7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DE641557-18C9-4E48-BAC8-AF0B456090A7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DE641557-18C9-4E48-BAC8-AF0B456090A7}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
