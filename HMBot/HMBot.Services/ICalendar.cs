@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace HMBot.Services
 {
-    public class Class1
+    class ICalendar
     {
     }
 }
