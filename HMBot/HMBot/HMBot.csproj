@@ -127,6 +127,16 @@
       <DependentUpon>Web.config</DependentUpon>
     </None>
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\HMBot.Models\HMBot.Models.csproj">
+      <Project>{ed8fa89e-5aab-49ec-a281-d4587b6bceac}</Project>
+      <Name>HMBot.Models</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\HMBot.Services\HMBot.Services.csproj">
+      <Project>{f562e42a-eba3-4918-bc84-8424c307c50d}</Project>
+      <Name>HMBot.Services</Name>
+    </ProjectReference>
+  </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
     <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
