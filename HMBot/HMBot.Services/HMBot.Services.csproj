@@ -67,6 +67,7 @@
   <ItemGroup>
     <Compile Include="ICalEvent.cs" />
     <Compile Include="Models\HMEvent.cs" />
+    <Compile Include="Models\HMFreeBusy.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

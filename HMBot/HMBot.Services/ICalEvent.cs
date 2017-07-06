@@ -71,38 +71,39 @@ namespace ICalTest
             };
 
             //참석자
-            GetAttendees(_Event, newEvent);
+            newEvent.Attendees = _Event.GetAttendees(_Event);
             return newEvent;
         }
 
-        private void GetAttendees(HMEvent _Event, Event _NewEvent)
-        {
-            List<EventAttendee> lstAttendee = new List<EventAttendee>();
-            foreach (string attendee in _Event.AttendeeList)
-            {
-                lstAttendee.Add(new EventAttendee()
-                {
-                    Email = attendee
-                });
-            }
-            _NewEvent.Attendees = lstAttendee.ToArray<EventAttendee>();
-        }
 
-        public async Task GetUserEvents(params string[] _Users)
+
+        public async Task<List<TimePeriod>> GetUserEvents(HMFreeBusy _HMFreeBusy)
         {
-            throw new NotImplementedException();
-            //FreeBusyRequest fbr = new FreeBusyRequest();
-            //fbr.TimeMin = DateTime.Parse("2017-07-06 00:00:01");
-            //fbr.TimeMax = DateTime.Parse("2017-07-06 23:59:59");
-            //fbr.TimeZone = "Asia/Seoul";
-            //FreeBusyRequestItem c = new FreeBusyRequestItem();
-            //c.Id = "jbh5310@gmail.com";
-            //fbr.Items = new List<FreeBusyRequestItem>();
-            //fbr.Items.Add(c);
-            //FreeBusyRequestItem c = new FreeBusyRequestItem();
-            //c.Id = "jbh5310@gmail.com";
-            //fbr.Items = new List<FreeBusyRequestItem>();
-            //fbr.Items.Add(c);
+            List<FreeBusyRequestItem> items = _HMFreeBusy.PersonList(_HMFreeBusy.Person.ToArray());
+
+            FreeBusyRequest fbr = new FreeBusyRequest();
+            fbr.TimeMin = DateTime.Parse(_HMFreeBusy.StartDt);
+            fbr.TimeMax = DateTime.Parse(_HMFreeBusy.EndDt);
+            fbr.TimeZone = _HMFreeBusy.TimeZone;
+            fbr.Items = items;
+
+            FreeBusyResponse fbrService = ICalService.Freebusy.Query(fbr).Execute();
+
+            List<HMEvent> lstEvent = new List<HMEvent>();
+            IDictionary<string, FreeBusyCalendar> busyCalendar = fbrService.Calendars;
+
+            List<FreeBusyCalendar> freeBusyCalendars = new List<FreeBusyCalendar>();
+
+            List<TimePeriod> lstTimePeriod = new List<TimePeriod>();
+            foreach (string mail in _HMFreeBusy.Person.ToArray())
+            {
+                foreach (TimePeriod bb in busyCalendar[mail].Busy)
+                {
+                    lstTimePeriod.Add(bb);
+                }
+            }
+
+            return lstTimePeriod;
         }
     }
 }

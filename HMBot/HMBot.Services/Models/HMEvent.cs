@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Google.Apis.Calendar.v3.Data;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -83,6 +84,19 @@ namespace ICalTest.Model
 
             this.AttendeeList.Add(attendee);
         }
-        
+
+        public List<EventAttendee> GetAttendees(HMEvent _Event)
+        {
+            List<EventAttendee> lstAttendee = new List<EventAttendee>();
+            foreach (string attendee in _Event.AttendeeList)
+            {
+                lstAttendee.Add(new EventAttendee()
+                {
+                    Email = attendee
+                });
+            }
+            return lstAttendee;
+        }
+
     }
 }
