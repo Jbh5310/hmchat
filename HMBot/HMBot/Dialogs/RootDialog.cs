@@ -85,12 +85,9 @@ namespace HMBot.Dialogs
                         // 로그인 해야 하면 
 
 
-
-
-                        break;
-                    case ScheduleOption:
-                        await context.PostAsync("일정등록을 선택하셨습니다.");
                         context.Call(new GoogleLoginDialog(), AfterLoginAsync);
+                        
+
                         // 로그인이 되어 있으면 Google Calendar Dialog 바로 시작 
                         //context.Call(new FlightScheduleDialog(luisService), this.ResumeAfterOptionDialog);
 
@@ -144,6 +141,7 @@ namespace HMBot.Dialogs
                 this.ShowOptions(context);
             }
         }
+
     }
 }
 

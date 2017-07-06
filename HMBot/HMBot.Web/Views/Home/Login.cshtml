@@ -1,7 +1,32 @@
-﻿
+﻿@using Microsoft.Owin.Security
+@using System.Linq
+@model string
 @{
     ViewBag.Title = "Login";
 }
 
-<h2>Login</h2>
+<h2>Google Login</h2>
+@{
+    var googleLoginProviders = Context.GetOwinContext().Authentication.GetExternalAuthenticationTypes().Where(x => x.AuthenticationType == "Google").FirstOrDefault();
 
+    if (googleLoginProviders == null)
+    {
+        <div>
+            <p>구글 로그인이 설정되어 있지 않습니다.</p>
+        </div>
+    }
+    else
+    {
+        using (Html.BeginForm("ExternalLogin", "Home", new { id = Model }))
+        {
+            @Html.AntiForgeryToken()
+            <div id="socialLoginList">
+                <p>
+                    <button type="submit" class="btn btn-default" id="@googleLoginProviders.AuthenticationType" name="provider"
+                            value="@googleLoginProviders.AuthenticationType"
+                            title="Log in using your @googleLoginProviders.Caption account">@googleLoginProviders.AuthenticationType</button>
+                </p>
+            </div>
+        }
+    }
+}

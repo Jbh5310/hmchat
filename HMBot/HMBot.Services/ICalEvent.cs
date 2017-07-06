@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Google.Apis.Calendar.v3;
 using Google;
+using HMBot.Models;
 
 namespace ICalTest
 {
@@ -20,6 +21,11 @@ namespace ICalTest
         public ICalEvent(CalendarService _Service)
         {
             this.ICalService = _Service;
+        }
+
+        public ICalEvent(GoogleToken token)
+        {
+            // CalendarService 생성
         }
 
         /// <summary>
