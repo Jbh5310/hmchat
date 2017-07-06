@@ -29,7 +29,24 @@ namespace HMBot.Web
                 AccessType = "offline",     // Request a refresh token.
                 ClientId = GoogleClientSecrets.ClientId,
                 ClientSecret = GoogleClientSecrets.ClientSecret,
-                Provider = new GoogleOAuth2AuthenticationProvider() { }
+
+                Provider = new GoogleOAuth2AuthenticationProvider() {
+                    OnAuthenticated = context =>
+                    {
+                        context.Identity.AddClaim(new Claim(GoogleClaimTypes.GoogleAccessToken, context.AccessToken));
+
+                        if (context.RefreshToken != null)
+                        {
+                            context.Identity.AddClaim(new Claim(GoogleClaimTypes.GoogleRefreshToken, context.RefreshToken));
+                        }
+                        context.Identity.AddClaim(new Claim(GoogleClaimTypes.GoogleUserId, context.Id));
+                        context.Identity.AddClaim(new Claim(GoogleClaimTypes.GoogleTokenIssuedAt, DateTime.UtcNow.ToBinary().ToString()));
+                        var expiresInSec = (long)(context.ExpiresIn.Value.TotalSeconds);
+                        context.Identity.AddClaim(new Claim(GoogleClaimTypes.GoogleTokenExpiresIn, expiresInSec.ToString()));
+
+                        return System.Threading.Tasks.Task.FromResult(0);
+                    }
+                }
             };
 
             foreach (var scope in GoogleRequestedScopes.Scopes)

@@ -8,8 +8,9 @@ using System.Threading.Tasks;
 using Google.Apis.Calendar.v3;
 using Google;
 using HMBot.Models;
+using HMBot.Services.Model;
 
-namespace ICalTest
+namespace HMBot.Services
 {
     public class ICalEvent
     {
@@ -18,10 +19,10 @@ namespace ICalTest
 
         private CalendarService ICalService { get; set; }
 
-        public ICalEvent(CalendarService _Service)
-        {
-            this.ICalService = _Service;
-        }
+        //public ICalEvent(CalendarService _Service)
+        //{
+        //    this.ICalService = _Service;
+        //}
 
         public ICalEvent(GoogleToken token)
         {

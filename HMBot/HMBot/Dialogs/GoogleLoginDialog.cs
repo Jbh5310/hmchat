@@ -13,16 +13,19 @@ namespace HMBot.Dialogs
     {
         public async Task StartAsync(IDialogContext context)
         {
-            var conversationid = context.MakeMessage().Conversation.Id;
-
             var message = context.MakeMessage();
+            var conversationid = message.Conversation.Id;
+            var channelid = message.ChannelId;
+
+            if (channelid == "emulator") channelid = "skype";
+
             message.Type = "message";
             message.Attachments = new List<Attachment>();
             List<CardAction> cardButtons = new List<CardAction>();
             CardAction plButton = new CardAction()
             {
-                Value = $"{System.Configuration.ConfigurationManager.AppSettings["AppWebSite"]}?id={HttpUtility.UrlEncode(conversationid)}",
-                Type = "구글 로그인",
+                Value = $"{System.Configuration.ConfigurationManager.AppSettings["LoginURL"]}?convid={HttpUtility.UrlEncode(conversationid)}&channelid={HttpUtility.UrlEncode(channelid)}",
+                Type = "signin",
                 Title = "일정을 만들려면 로그인이 필요합니다."
             };
 
@@ -34,6 +37,7 @@ namespace HMBot.Dialogs
 
             await context.PostAsync(message);
 
+            
             context.Done("로그인성공");
         }
     }

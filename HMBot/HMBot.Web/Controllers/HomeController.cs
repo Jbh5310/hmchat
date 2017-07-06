@@ -8,9 +8,10 @@ using System.Web;
 using System.Web.Mvc;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
-using Microsoft.Owin.Security;
 using HMBot.Web.Models;
 using System.Configuration;
+using Microsoft.Bot.Connector;
+using HMBot.Models;
 
 namespace HMBot.Web.Controllers
 {
@@ -22,22 +23,28 @@ namespace HMBot.Web.Controllers
             return View();
         }
 
-        public ActionResult Login(string id)
+        public ActionResult Login(string convid, string channelid)
         {
-            return View(id);
+            var convsationid = new ConversatoinIdentityViewModel
+            {
+                ChannelId = channelid,
+                CoversatoinId = convid
+
+            };
+            return View(convsationid);
         }
 
         [HttpPost]
         [AllowAnonymous]
         [ValidateAntiForgeryToken]
-        public ActionResult ExternalLogin(string provider, string id)
+        public ActionResult ExternalLogin(string provider, string convid, string channelid)
         {
             // Request a redirect to the external login provider
-            return new ChallengeResult(provider, Url.Action("ExternalLoginCallback", "Home", new { id = id }));
+            return new ChallengeResult(provider, Url.Action("ExternalLoginCallback", "Home", new { convid = convid, channelid = channelid }));
         }
 
         [AllowAnonymous]
-        public async Task<ActionResult> ExternalLoginCallback(string id)
+        public async Task<ActionResult> ExternalLoginCallback(string convid, string channelid)
         {
             var loginInfo = await HttpContext.GetOwinContext().Authentication.GetExternalLoginInfoAsync();
             if (loginInfo == null)
@@ -45,18 +52,26 @@ namespace HMBot.Web.Controllers
                 return RedirectToAction("Login");
             }
 
-            // 여기서 Microsoft Bot Framework의 State에 토큰을 저장. 
-            //var botCred = new Microsoft.Bot.Connector.MicrosoftAppCredentials(ConfigurationManager.AppSettings["MicrosoftAppId"], ConfigurationManager.AppSettings["MicrosoftAppPassword"]);
-            //var stateClient = new StateClient(botCred);
+            var identity = await HttpContext.GetOwinContext().Authentication.GetExternalIdentityAsync(DefaultAuthenticationTypes.ExternalCookie);
 
-            //BotState botState = new BotState(stateClient);
+            var userId = identity.FindFirstValue(GoogleClaimTypes.GoogleUserId);
 
-            //BotData botData = new BotData(eTag: "*");
+            var token = new GoogleToken()
+            {
+                AccessToken = identity.FindFirstValue(GoogleClaimTypes.GoogleAccessToken),
+                RefreshToken = identity.FindFirstValue(GoogleClaimTypes.GoogleRefreshToken),
+                Issued = DateTime.FromBinary(long.Parse(identity.FindFirstValue(GoogleClaimTypes.GoogleTokenIssuedAt))),
+                ExpiresInSeconds = long.Parse(identity.FindFirstValue(GoogleClaimTypes.GoogleTokenExpiresIn)),
+            };
 
-            //botData.SetProperty<string>("AccessToken", authResult.AccessToken);
+            // 여기서 Microsoft Bot Framework의 State에 토큰 정보를 저장. 
+            var botCred = new MicrosoftAppCredentials(ConfigurationManager.AppSettings["MicrosoftAppId"], ConfigurationManager.AppSettings["MicrosoftAppPassword"]);
+            var stateClient = new StateClient(botCred);
+            BotState botState = new BotState(stateClient);
+            BotData botData = new BotData(eTag: "*");
+            botData.SetProperty<GoogleToken>("GoogleTokenInfo", token);
 
-            //await stateClient.BotState.SetUserDataAsync("skype", Session["skypeuserid"].ToString(), botData);
-
+            await stateClient.BotState.SetConversationDataAsync(channelid, convid, botData);
 
 
             return View("ExternalLoginConfirmation", new ExternalLoginConfirmationViewModel { Email = loginInfo.Email });

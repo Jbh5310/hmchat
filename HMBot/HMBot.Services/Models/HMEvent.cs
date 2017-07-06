@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ICalTest.Model
+namespace HMBot.Services.Model
 {
     public class HMEvent
     {

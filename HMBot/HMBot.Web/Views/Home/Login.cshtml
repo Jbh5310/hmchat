@@ -1,6 +1,7 @@
 ﻿@using Microsoft.Owin.Security
+@using HMBot.Web.Models
 @using System.Linq
-@model string
+@model HMBot.Web.Models.ConversatoinIdentityViewModel
 @{
     ViewBag.Title = "Login";
 }
@@ -17,7 +18,7 @@
     }
     else
     {
-        using (Html.BeginForm("ExternalLogin", "Home", new { id = Model }))
+        using (Html.BeginForm("ExternalLogin", "Home", new { convid = Model.CoversatoinId, channelid = Model.ChannelId }))
         {
             @Html.AntiForgeryToken()
             <div id="socialLoginList">
