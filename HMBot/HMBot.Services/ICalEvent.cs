@@ -14,6 +14,7 @@ namespace ICalTest
     {
         public static string C_TIMEZONE_SEOUL { get; } = "Asia/Seoul";
         public static string C_CALENDAR_ID { get; } = "primary";
+
         private CalendarService ICalService { get; set; }
 
         public ICalEvent(CalendarService _Service)

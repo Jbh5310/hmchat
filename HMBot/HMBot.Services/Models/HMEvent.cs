@@ -9,6 +9,7 @@ namespace ICalTest.Model
 {
     public class HMEvent
     {
+
         /// <summary>
         /// iCal ID
         /// </summary>
@@ -85,10 +86,10 @@ namespace ICalTest.Model
             this.AttendeeList.Add(attendee);
         }
 
-        public List<EventAttendee> GetAttendees(HMEvent _Event)
+        public List<EventAttendee> GetAttendees()
         {
             List<EventAttendee> lstAttendee = new List<EventAttendee>();
-            foreach (string attendee in _Event.AttendeeList)
+            foreach (string attendee in AttendeeList)
             {
                 lstAttendee.Add(new EventAttendee()
                 {
@@ -108,22 +109,22 @@ namespace ICalTest.Model
             //Event 생성
             Event newEvent = new Event()
             {
-                Summary = _Event.Subject,
-                Location = _Event.Location,
+                Summary = Subject,
+                Location = Location,
                 Start = new EventDateTime()
                 {
-                    TimeZone = C_TIMEZONE_SEOUL,
-                    DateTime = DateTime.Parse(_Event.StartDt)
+                    TimeZone = ICalEvent.C_TIMEZONE_SEOUL,
+                    DateTime = DateTime.Parse(StartDt)
                 },
                 End = new EventDateTime()
                 {
-                    TimeZone = C_TIMEZONE_SEOUL,
-                    DateTime = DateTime.Parse(_Event.EndDt)
+                    TimeZone = ICalEvent.C_TIMEZONE_SEOUL,
+                    DateTime = DateTime.Parse(EndDt)
                 }
             };
 
             //참석자
-            newEvent.Attendees = _Event.GetAttendees(_Event);
+            newEvent.Attendees = GetAttendees();
             return newEvent;
         }
 
