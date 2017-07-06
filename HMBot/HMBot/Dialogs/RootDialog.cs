@@ -22,12 +22,8 @@ namespace HMBot.Dialogs
     {
         private const string CESOption = "CES회의실/차량예약";
         private const string ScheduleOption = "일정등록";
-        //private const string MyReservationOption = "예약조회";
-        //private const string FAQOption = "서비스문의";
         private bool userWelcomed = false;
         private string language;
-
-
 
         //public Task StartAsync(IDialogContext context)
         //{
@@ -42,75 +38,39 @@ namespace HMBot.Dialogs
 
         }
 
-        private async Task MessageReceivedAsync(IDialogContext context, IAwaitable<object> result)
+        private async Task MessageReceivedAsync(IDialogContext context, IAwaitable<IMessageActivity> result)
         {
-            var activity = await result as Activity;
-
-            // calculate something for us to return
-            //int length = (activity.Text ?? string.Empty).Length;
-
-            //// return our reply to the user
-            //await context.PostAsync($"You sent {activity.Text} which was {length} characters");
-
-            //switch (activity.Type)
-            //{
-                //case ActivityTypes.ConversationUpdate:
-                //case ActivityTypes.ContactRelationUpdate:
-                    //if (!userWelcomed)
-                    //{
-                    //    this.userWelcomed = true;
-                    //    await context.PostAsync(Responses.WelcomeMessage);
-                    //}
-                    //else
-                    //{
-                    //    await context.PostAsync(Responses.WelcomeBackMessage);
-                    //}
-                    this.ShowOptions(context);
-                //    break;
-                //default:
-                //    context.Wait(MessageReceivedAsync);
-                //    break;
-          //  }
-
-            //this.ShowOptions(context);
-
-            //context.Wait(MessageReceivedAsync);
+            this.ShowOptions(context);
         }
 
-      private void ShowOptions(IDialogContext context)
+        private void ShowOptions(IDialogContext context)
         {
-        PromptDialog.Choice(context, this.OnOptionSelected, new List<string>() { CESOption, ScheduleOption}, "안녕하세요HM봇 입니다^^, \r\n서비스를 선택하여주십시오.");
-
+            PromptDialog.Choice(context, this.OnOptionSelected, new List<string>() { CESOption, ScheduleOption }, "안녕하세요HM봇 입니다^^, \r\n서비스를 선택하여주십시오.");
         }
 
         private async Task OnOptionSelected(IDialogContext context, IAwaitable<string> result)
         {
             try
             {
-             
-                //language = "ko";
-                string optionSelected = await result;
-                LuisService luisService;
-
-
-                switch (optionSelected)
+                string selectedOption = await result;
+                
+                switch (selectedOption)
                 {
                     case CESOption:
                         await context.PostAsync("CES회의실/차량예약을 선택하셨습니다.");
+                        // TODO: state 보고 로그인 되었는지 확인 
+
+                        // 로그인 해야 하면 
+                        context.Call(new GoogleLoginDialog(), AfterLoginAsync);
+
+                        // 로그인이 되어 있으면 Google Calendar Dialog 바로 시작 
                         //context.Call(new FlightScheduleDialog(luisService), this.ResumeAfterOptionDialog);
+
                         break;
                     case ScheduleOption:
                         await context.PostAsync("일정등록을 선택하셨습니다.");
                        // context.Call(new FlightStatusLuisDialog(luisService), this.ResumeAfterOptionDialog);
                         break;
-                        ////case MyReservationOption:
-                        ////    await context.PostAsync("예약 조회를 선택하셨습니다.\n\n입력예시:");
-                        ////   // context.Call(new FlightStatusLuisDialog(luisService), this.ResumeAfterOptionDialog);
-                        ////    break;
-                        ////case FAQOption:
-                        ////    await context.PostAsync("서비스 문의를 선택하셨습니다.\n\n입력예시:");
-                        ////  //  context.Call(new FAQSearchDialog(), this.ResumeAfterOptionDialog);
-                        ////    break;
                 }
             }
             catch (TooManyAttemptsException ex)
@@ -119,6 +79,23 @@ namespace HMBot.Dialogs
             }
         }
 
+        private async Task AfterLoginAsync(IDialogContext context, IAwaitable<string> result)
+        {
+            // 로그인 성공 후에는 
+            // Google Calendar Dialog 시작 
+            var googleCalendarForm = new FormDialog<GoogleCalendarForm>(new GoogleCalendarForm(), GoogleCalendarForm.BuildForm, FormOptions.PromptInStart);
+            context.Call(googleCalendarForm, googleCaleadarComplete);
+        }
+
+        private async Task googleCaleadarComplete(IDialogContext context, IAwaitable<GoogleCalendarForm> result)
+        {
+            // 구글 캘린더 등록
+
+            // 추가 참석자가 있는지 물어보고 
+            // 있다면 GoogleAttendeeDialog 로 이동 
+
+            // 없다면 끝. 다시 처음으로 돌아가서 메뉴 
+        }
     }
 }
 
