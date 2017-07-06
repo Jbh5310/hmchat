@@ -19,7 +19,7 @@ namespace HMBot.Dialogs
             List<CardAction> cardButtons = new List<CardAction>();
             CardAction plButton = new CardAction()
             {
-                Value = $"{System.Configuration.ConfigurationManager.AppSettings["AppWebSite"]}/Home/Login?userid={HttpUtility.UrlEncode(activity.From.Id)}",
+                //Value = $"{System.Configuration.ConfigurationManager.AppSettings["AppWebSite"]}/Home/Login?userid={HttpUtility.UrlEncode(activity.From.Id)}",
                 Type = "signin",
                 Title = "Authentication Required"
             };
