@@ -34,13 +34,34 @@ namespace HMBot.Dialogs
 
         public async Task StartAsync(IDialogContext context)
         {
+
             context.Wait(this.MessageReceivedAsync);
 
         }
 
         private async Task MessageReceivedAsync(IDialogContext context, IAwaitable<IMessageActivity> result)
         {
-            this.ShowOptions(context);
+            //  this.ShowOptions(context);
+            var activity = await result;
+            switch (activity.Type)
+            {
+                case ActivityTypes.ConversationUpdate:
+                case ActivityTypes.ContactRelationUpdate:
+                    if (!userWelcomed)
+                    {
+                        this.userWelcomed = true;
+                        await context.PostAsync(Internal.Responses.WelcomeMessage);
+                    }
+                    else
+                    {
+                        await context.PostAsync(Internal.Responses.WelcomeBackMessage);
+                    }
+                    this.ShowOptions(context);
+                    break;
+                default:
+                    context.Wait(MessageReceivedAsync);
+                    break;
+            }
         }
 
         private void ShowOptions(IDialogContext context)
@@ -57,11 +78,12 @@ namespace HMBot.Dialogs
                 switch (selectedOption)
                 {
                     case CESOption:
-                        await context.PostAsync("CES회의실/차량예약을 선택하셨습니다.");
+                        await context.PostAsync("준비중인 서비스입니다...");
+                        PromptDialog.Choice(context, this.OnOptionSelected, new List<string>() { CESOption, ScheduleOption }, "안녕하세요HM봇 입니다^^, \r\n서비스를 선택하여주십시오.");
                         // TODO: state 보고 로그인 되었는지 확인 
 
                         // 로그인 해야 하면 
-         
+
 
 
 
@@ -88,12 +110,7 @@ namespace HMBot.Dialogs
             var googleCalendarForm = new FormDialog<GoogleCalendarForm>(new GoogleCalendarForm(), GoogleCalendarForm.BuildForm, FormOptions.PromptInStart);
             context.Call(googleCalendarForm, googleCaleadarComplete);
 
-
-
-
-
-
-
+            
 
 
         }
@@ -101,6 +118,10 @@ namespace HMBot.Dialogs
         private async Task googleCaleadarComplete(IDialogContext context, IAwaitable<GoogleCalendarForm> result)
         {
             // 구글 캘린더 등록
+
+            await context.PostAsync("일정등록을 완료하였습니다, 일정을 확인해주세요.");
+
+            PromptDialog.Choice(context, this.OnOptionSelected, new List<string>() { CESOption, ScheduleOption }, "안녕하세요HM봇 입니다^^, \r\n서비스를 선택하여주십시오.");
 
             // 추가 참석자가 있는지 물어보고 
             // 있다면 GoogleAttendeeDialog 로 이동 
