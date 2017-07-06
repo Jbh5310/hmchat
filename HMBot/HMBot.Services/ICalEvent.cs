@@ -12,8 +12,8 @@ namespace ICalTest
 {
     public class ICalEvent
     {
-        private string C_TIMEZONE_SEOUL { get; } = "Asia/Seoul";
-        private string C_CALENDAR_ID { get; } = "primary";
+        public static string C_TIMEZONE_SEOUL { get; } = "Asia/Seoul";
+        public static string C_CALENDAR_ID { get; } = "primary";
         private CalendarService ICalService { get; set; }
 
         public ICalEvent(CalendarService _Service)
@@ -27,7 +27,7 @@ namespace ICalTest
         /// <param name="_Event"></param>
         public async Task InsertEvent(HMEvent _Event)
         {
-            Event iCalEvent  = CraeteICalEvent(_Event);
+            Event iCalEvent  = _Event.CraeteICalEvent();
             try
             {
                 EventsResource.InsertRequest requestEvent = ICalService.Events.Insert(iCalEvent, C_CALENDAR_ID);
@@ -46,36 +46,7 @@ namespace ICalTest
             }
         }
 
-        /// <summary>
-        /// Craete iCal Event Object
-        /// </summary>
-        /// <param name="_Event"></param>
-        /// <returns></returns>
-        private Event CraeteICalEvent(HMEvent _Event)
-        {
-            //Event 생성
-            Event newEvent = new Event()
-            {
-                Summary = _Event.Subject,
-                Location = _Event.Location,
-                Start = new EventDateTime()
-                {
-                    TimeZone = C_TIMEZONE_SEOUL,
-                    DateTime = DateTime.Parse(_Event.StartDt)
-                },
-                End = new EventDateTime()
-                {
-                    TimeZone = C_TIMEZONE_SEOUL,
-                    DateTime = DateTime.Parse(_Event.EndDt)
-                }
-            };
-
-            //참석자
-            newEvent.Attendees = _Event.GetAttendees(_Event);
-            return newEvent;
-        }
-
-
+        
 
         public async Task<List<TimePeriod>> GetUserEvents(HMFreeBusy _HMFreeBusy)
         {

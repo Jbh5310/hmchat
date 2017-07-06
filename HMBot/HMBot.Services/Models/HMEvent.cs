@@ -98,5 +98,34 @@ namespace ICalTest.Model
             return lstAttendee;
         }
 
+        /// <summary>
+        /// Craete iCal Event Object
+        /// </summary>
+        /// <param name="_Event"></param>
+        /// <returns></returns>
+        public Event CraeteICalEvent()
+        {
+            //Event 생성
+            Event newEvent = new Event()
+            {
+                Summary = _Event.Subject,
+                Location = _Event.Location,
+                Start = new EventDateTime()
+                {
+                    TimeZone = C_TIMEZONE_SEOUL,
+                    DateTime = DateTime.Parse(_Event.StartDt)
+                },
+                End = new EventDateTime()
+                {
+                    TimeZone = C_TIMEZONE_SEOUL,
+                    DateTime = DateTime.Parse(_Event.EndDt)
+                }
+            };
+
+            //참석자
+            newEvent.Attendees = _Event.GetAttendees(_Event);
+            return newEvent;
+        }
+
     }
 }
