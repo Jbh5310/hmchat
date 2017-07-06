@@ -112,6 +112,7 @@
   <ItemGroup>
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Controllers\MessagesController.cs" />
+    <Compile Include="Dialogs\DatetimeDialog.cs" />
     <Compile Include="Dialogs\GoogleAttendeeDialog.cs" />
     <Compile Include="Dialogs\GoogleCalendarForm.cs" />
     <Compile Include="Dialogs\GoogleLoginDialog.cs" />

@@ -61,15 +61,17 @@ namespace HMBot.Dialogs
                         // TODO: state 보고 로그인 되었는지 확인 
 
                         // 로그인 해야 하면 
-                        context.Call(new GoogleLoginDialog(), AfterLoginAsync);
+         
 
-                        // 로그인이 되어 있으면 Google Calendar Dialog 바로 시작 
-                        //context.Call(new FlightScheduleDialog(luisService), this.ResumeAfterOptionDialog);
+
 
                         break;
                     case ScheduleOption:
                         await context.PostAsync("일정등록을 선택하셨습니다.");
-                       // context.Call(new FlightStatusLuisDialog(luisService), this.ResumeAfterOptionDialog);
+                        context.Call(new GoogleLoginDialog(), AfterLoginAsync);
+                        // 로그인이 되어 있으면 Google Calendar Dialog 바로 시작 
+                        //context.Call(new FlightScheduleDialog(luisService), this.ResumeAfterOptionDialog);
+
                         break;
                 }
             }
@@ -85,6 +87,10 @@ namespace HMBot.Dialogs
             // Google Calendar Dialog 시작 
             var googleCalendarForm = new FormDialog<GoogleCalendarForm>(new GoogleCalendarForm(), GoogleCalendarForm.BuildForm, FormOptions.PromptInStart);
             context.Call(googleCalendarForm, googleCaleadarComplete);
+
+
+
+
         }
 
         private async Task googleCaleadarComplete(IDialogContext context, IAwaitable<GoogleCalendarForm> result)
