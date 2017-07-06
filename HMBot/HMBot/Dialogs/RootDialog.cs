@@ -91,6 +91,11 @@ namespace HMBot.Dialogs
 
 
 
+
+
+
+
+
         }
 
         private async Task googleCaleadarComplete(IDialogContext context, IAwaitable<GoogleCalendarForm> result)
@@ -101,6 +106,22 @@ namespace HMBot.Dialogs
             // 있다면 GoogleAttendeeDialog 로 이동 
 
             // 없다면 끝. 다시 처음으로 돌아가서 메뉴 
+        }
+
+        private async Task ResumeAfterOptionDialog(IDialogContext context, IAwaitable<object> result)
+        {
+            try
+            {
+                var message = await result;
+            }
+            catch (Exception ex)
+            {
+                await context.PostAsync($"오류가 발생했습니다. 빠른 시일안에 개선하겠습니다.: {ex.Message}");
+            }
+            finally
+            {
+                this.ShowOptions(context);
+            }
         }
     }
 }
