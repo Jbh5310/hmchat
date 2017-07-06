@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Google.Apis.Calendar.v3.Data;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,6 +9,7 @@ namespace ICalTest.Model
 {
     public class HMEvent
     {
+
         /// <summary>
         /// iCal ID
         /// </summary>
@@ -83,6 +85,48 @@ namespace ICalTest.Model
 
             this.AttendeeList.Add(attendee);
         }
-        
+
+        public List<EventAttendee> GetAttendees()
+        {
+            List<EventAttendee> lstAttendee = new List<EventAttendee>();
+            foreach (string attendee in AttendeeList)
+            {
+                lstAttendee.Add(new EventAttendee()
+                {
+                    Email = attendee
+                });
+            }
+            return lstAttendee;
+        }
+
+        /// <summary>
+        /// Craete iCal Event Object
+        /// </summary>
+        /// <param name="_Event"></param>
+        /// <returns></returns>
+        public Event CraeteICalEvent()
+        {
+            //Event 생성
+            Event newEvent = new Event()
+            {
+                Summary = Subject,
+                Location = Location,
+                Start = new EventDateTime()
+                {
+                    TimeZone = ICalEvent.C_TIMEZONE_SEOUL,
+                    DateTime = DateTime.Parse(StartDt)
+                },
+                End = new EventDateTime()
+                {
+                    TimeZone = ICalEvent.C_TIMEZONE_SEOUL,
+                    DateTime = DateTime.Parse(EndDt)
+                }
+            };
+
+            //참석자
+            newEvent.Attendees = GetAttendees();
+            return newEvent;
+        }
+
     }
 }

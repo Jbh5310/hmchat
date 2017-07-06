@@ -12,8 +12,9 @@ namespace ICalTest
 {
     public class ICalEvent
     {
-        private string C_TIMEZONE_SEOUL { get; } = "Asia/Seoul";
-        private string C_CALENDAR_ID { get; } = "primary";
+        public static string C_TIMEZONE_SEOUL { get; } = "Asia/Seoul";
+        public static string C_CALENDAR_ID { get; } = "primary";
+
         private CalendarService ICalService { get; set; }
 
         public ICalEvent(CalendarService _Service)
@@ -27,7 +28,7 @@ namespace ICalTest
         /// <param name="_Event"></param>
         public async Task InsertEvent(HMEvent _Event)
         {
-            Event iCalEvent  = CraeteICalEvent(_Event);
+            Event iCalEvent  = _Event.CraeteICalEvent();
             try
             {
                 EventsResource.InsertRequest requestEvent = ICalService.Events.Insert(iCalEvent, C_CALENDAR_ID);
@@ -46,63 +47,35 @@ namespace ICalTest
             }
         }
 
-        /// <summary>
-        /// Craete iCal Event Object
-        /// </summary>
-        /// <param name="_Event"></param>
-        /// <returns></returns>
-        private Event CraeteICalEvent(HMEvent _Event)
+        
+
+        public async Task<List<TimePeriod>> GetUserEvents(HMFreeBusy _HMFreeBusy)
         {
-            //Event 생성
-            Event newEvent = new Event()
+            List<FreeBusyRequestItem> items = _HMFreeBusy.PersonList(_HMFreeBusy.Person.ToArray());
+
+            FreeBusyRequest fbr = new FreeBusyRequest();
+            fbr.TimeMin = DateTime.Parse(_HMFreeBusy.StartDt);
+            fbr.TimeMax = DateTime.Parse(_HMFreeBusy.EndDt);
+            fbr.TimeZone = _HMFreeBusy.TimeZone;
+            fbr.Items = items;
+
+            FreeBusyResponse fbrService = ICalService.Freebusy.Query(fbr).Execute();
+
+            List<HMEvent> lstEvent = new List<HMEvent>();
+            IDictionary<string, FreeBusyCalendar> busyCalendar = fbrService.Calendars;
+
+            List<FreeBusyCalendar> freeBusyCalendars = new List<FreeBusyCalendar>();
+
+            List<TimePeriod> lstTimePeriod = new List<TimePeriod>();
+            foreach (string mail in _HMFreeBusy.Person.ToArray())
             {
-                Summary = _Event.Subject,
-                Location = _Event.Location,
-                Start = new EventDateTime()
+                foreach (TimePeriod bb in busyCalendar[mail].Busy)
                 {
-                    TimeZone = C_TIMEZONE_SEOUL,
-                    DateTime = DateTime.Parse(_Event.StartDt)
-                },
-                End = new EventDateTime()
-                {
-                    TimeZone = C_TIMEZONE_SEOUL,
-                    DateTime = DateTime.Parse(_Event.EndDt)
+                    lstTimePeriod.Add(bb);
                 }
-            };
-
-            //참석자
-            GetAttendees(_Event, newEvent);
-            return newEvent;
-        }
-
-        private void GetAttendees(HMEvent _Event, Event _NewEvent)
-        {
-            List<EventAttendee> lstAttendee = new List<EventAttendee>();
-            foreach (string attendee in _Event.AttendeeList)
-            {
-                lstAttendee.Add(new EventAttendee()
-                {
-                    Email = attendee
-                });
             }
-            _NewEvent.Attendees = lstAttendee.ToArray<EventAttendee>();
-        }
 
-        public async Task GetUserEvents(params string[] _Users)
-        {
-            throw new NotImplementedException();
-            //FreeBusyRequest fbr = new FreeBusyRequest();
-            //fbr.TimeMin = DateTime.Parse("2017-07-06 00:00:01");
-            //fbr.TimeMax = DateTime.Parse("2017-07-06 23:59:59");
-            //fbr.TimeZone = "Asia/Seoul";
-            //FreeBusyRequestItem c = new FreeBusyRequestItem();
-            //c.Id = "jbh5310@gmail.com";
-            //fbr.Items = new List<FreeBusyRequestItem>();
-            //fbr.Items.Add(c);
-            //FreeBusyRequestItem c = new FreeBusyRequestItem();
-            //c.Id = "jbh5310@gmail.com";
-            //fbr.Items = new List<FreeBusyRequestItem>();
-            //fbr.Items.Add(c);
+            return lstTimePeriod;
         }
     }
 }
