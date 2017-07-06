@@ -58,17 +58,16 @@ namespace HMBot.Dialogs
                 {
                     case CESOption:
                         await context.PostAsync("CES회의실/차량예약을 선택하셨습니다.");
-                        // TODO: state 보고 로그인 되었는지 확인 
-
-                        // 로그인 해야 하면 
-         
-
-
-
                         break;
                     case ScheduleOption:
                         await context.PostAsync("일정등록을 선택하셨습니다.");
+
+                        // state 보고 로그인 되었는지 확인
+
+
                         context.Call(new GoogleLoginDialog(), AfterLoginAsync);
+                        
+
                         // 로그인이 되어 있으면 Google Calendar Dialog 바로 시작 
                         //context.Call(new FlightScheduleDialog(luisService), this.ResumeAfterOptionDialog);
 
@@ -123,6 +122,7 @@ namespace HMBot.Dialogs
                 this.ShowOptions(context);
             }
         }
+
     }
 }
 

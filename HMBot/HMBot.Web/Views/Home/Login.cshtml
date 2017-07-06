@@ -1,5 +1,6 @@
 ﻿@using Microsoft.Owin.Security
 @using System.Linq
+@model string
 @{
     ViewBag.Title = "Login";
 }
@@ -16,7 +17,7 @@
     }
     else
     {
-        using (Html.BeginForm("ExternalLogin", "Home", new { ReturnUrl = "/" }))
+        using (Html.BeginForm("ExternalLogin", "Home", new { id = Model }))
         {
             @Html.AntiForgeryToken()
             <div id="socialLoginList">

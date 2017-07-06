@@ -10,6 +10,7 @@ using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin.Security;
 using HMBot.Web.Models;
+using System.Configuration;
 
 namespace HMBot.Web.Controllers
 {
@@ -21,28 +22,42 @@ namespace HMBot.Web.Controllers
             return View();
         }
 
-        public ActionResult Login()
+        public ActionResult Login(string id)
         {
-            return View();
+            return View(id);
         }
 
         [HttpPost]
         [AllowAnonymous]
         [ValidateAntiForgeryToken]
-        public ActionResult ExternalLogin(string provider, string returnUrl)
+        public ActionResult ExternalLogin(string provider, string id)
         {
             // Request a redirect to the external login provider
-            return new ChallengeResult(provider, Url.Action("ExternalLoginCallback", "Home", new { ReturnUrl = returnUrl }));
+            return new ChallengeResult(provider, Url.Action("ExternalLoginCallback", "Home", new { id = id }));
         }
 
         [AllowAnonymous]
-        public async Task<ActionResult> ExternalLoginCallback(string returnUrl)
+        public async Task<ActionResult> ExternalLoginCallback(string id)
         {
             var loginInfo = await HttpContext.GetOwinContext().Authentication.GetExternalLoginInfoAsync();
             if (loginInfo == null)
             {
                 return RedirectToAction("Login");
             }
+
+            // 여기서 Microsoft Bot Framework의 State에 토큰을 저장. 
+            //var botCred = new Microsoft.Bot.Connector.MicrosoftAppCredentials(ConfigurationManager.AppSettings["MicrosoftAppId"], ConfigurationManager.AppSettings["MicrosoftAppPassword"]);
+            //var stateClient = new StateClient(botCred);
+
+            //BotState botState = new BotState(stateClient);
+
+            //BotData botData = new BotData(eTag: "*");
+
+            //botData.SetProperty<string>("AccessToken", authResult.AccessToken);
+
+            //await stateClient.BotState.SetUserDataAsync("skype", Session["skypeuserid"].ToString(), botData);
+
+
 
             return View("ExternalLoginConfirmation", new ExternalLoginConfirmationViewModel { Email = loginInfo.Email });
         }
