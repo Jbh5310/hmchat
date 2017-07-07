@@ -106,6 +106,9 @@ namespace HMBot.Dialogs
 
         private async Task AfterLoginAsync(IDialogContext context, IAwaitable<string> result)
         {
+            // 로그인하셨나요? 
+
+
             // 로그인 성공 후에는 
             // Google Calendar Dialog 시작 
             var googleCalendarForm = new FormDialog<GoogleCalendarForm>(new GoogleCalendarForm(), GoogleCalendarForm.BuildForm, FormOptions.PromptInStart);
