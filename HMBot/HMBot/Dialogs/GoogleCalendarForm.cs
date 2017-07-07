@@ -73,8 +73,13 @@ namespace HMBot.Dialogs
 
                 LuisResult LuisResult = await  ParseUserInput(state.DateFrom);
 
-
+             //   state.DateFrom = DateTime.Parse(LuisResult.Entities[0].Entity + LuisResult.Entities[1].Entity + LuisResult.Entities[2].Entity + LuisResult.Entities[3].Entity);
                 state.DateFrom =  LuisResult.Entities[0].Entity.Replace("년", "-") + "0" + LuisResult.Entities[1].Entity.Replace("월", "-") + LuisResult.Entities[2].Entity.Replace("일", "") + LuisResult.Entities[3].Entity.Replace("시", "") + ":00";
+
+                state.DateFrom = DateTime.Parse(state.DateFrom).ToString();
+
+              //  DateTime.ParseExact()
+               // DateTime.ParseExact
 
                 LuisResult LuisResult2 = await ParseUserInput(state.DateTo);
 

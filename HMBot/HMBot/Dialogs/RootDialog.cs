@@ -83,6 +83,9 @@ namespace HMBot.Dialogs
                         // TODO: state 보고 로그인 되었는지 확인 
 
                         // 로그인 해야 하면 
+                        break;
+
+                    case ScheduleOption:
 
 
                         context.Call(new GoogleLoginDialog(), AfterLoginAsync);
