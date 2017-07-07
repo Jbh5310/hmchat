@@ -35,7 +35,7 @@ namespace HMBot.Services
             var initializer = new BaseClientService.Initializer()
             {
                 HttpClientInitializer = credential,
-                ApplicationName = "HM Bot",
+                ApplicationName = "HMBot",
             };
             ICalService = new CalendarService(initializer);
         }
@@ -59,7 +59,11 @@ namespace HMBot.Services
             var token = new TokenResponse
             {
                 AccessToken = _Token.AccessToken,
-                RefreshToken = _Token.RefreshToken
+                RefreshToken = _Token.RefreshToken,
+                IssuedUtc = _Token.Issued,
+                ExpiresInSeconds = _Token.ExpiresInSeconds
+
+
             };
 
             return new UserCredential(flow, userId, token);

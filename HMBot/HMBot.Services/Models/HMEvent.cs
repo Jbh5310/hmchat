@@ -19,7 +19,7 @@ namespace HMBot.Services.Model
         /// </summary>
         public string Subject { get; set; }
         /// <summary>
-        /// 시작일시(YYYY-MM-DD 24HH:MI)
+        /// 시작일시(YYYY-MM-DD 24HH:MI:SS)
         /// </summary>
         private string strStartDt;
         public string StartDt
@@ -31,11 +31,11 @@ namespace HMBot.Services.Model
             set
             {
                 //뒤에 초를 붙여준다.
-                strStartDt = value + ":00";
+                strStartDt = value;
             }
         }
         /// <summary>
-        /// 종료일시((YYYY-MM-DD 24HH:MI)
+        /// 종료일시((YYYY-MM-DD 24HH:MI:SS)
         /// </summary>
         private string strEndDt;
         public string EndDt
@@ -47,7 +47,7 @@ namespace HMBot.Services.Model
             set
             {
                 //뒤에 초를 붙여준다.
-                strEndDt = value + ":00";
+                strEndDt = value;
             }
         }
         public string Location { get; set; }

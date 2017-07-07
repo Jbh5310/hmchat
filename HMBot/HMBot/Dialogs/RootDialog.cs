@@ -154,7 +154,7 @@ namespace HMBot.Dialogs
             newEvent.StartDt = re.DateFrom;
             newEvent.EndDt = re.DateTo;
             newEvent.Location = re.Place;
-            newEvent.AddAttendd("jeipil@gmail.com");
+            newEvent.AddAttendd("jeipilh@gmail.com");
             newEvent.AddAttendd("hanmiitrnd@gmail.com");
 
 
