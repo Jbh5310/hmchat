@@ -12,6 +12,9 @@ using Microsoft.Bot.Builder.FormFlow;
 using System.Linq;
 using Microsoft.Bot.Builder.Luis;
 using System.Configuration;
+using ICalTest;
+using HMBot.Services;
+using HMBot.Models;
 #pragma warning disable 649
 #pragma warning disable CS1998
 
@@ -87,13 +90,16 @@ namespace HMBot.Dialogs
 
                     case ScheduleOption:
 
+                        break;
 
+                    case ScheduleOption:
+                        await context.PostAsync("일정등록을 선택하셨습니다.");
+                        // TODO: state 보고 로그인 되었는지 확인
+                        // 지금은 확인하지 않고 로그인 메시지 띄움 
                         context.Call(new GoogleLoginDialog(), AfterLoginAsync);
+
                         
-
-                        // 로그인이 되어 있으면 Google Calendar Dialog 바로 시작 
-                        //context.Call(new FlightScheduleDialog(luisService), this.ResumeAfterOptionDialog);
-
+                        // TODO: 로그인이 되어 있으면 Google Calendar Dialog 바로 시작 
                         break;
                 }
             }
@@ -105,19 +111,42 @@ namespace HMBot.Dialogs
 
         private async Task AfterLoginAsync(IDialogContext context, IAwaitable<string> result)
         {
+            // 로그인하셨나요? 
+
+
             // 로그인 성공 후에는 
             // Google Calendar Dialog 시작 
             var googleCalendarForm = new FormDialog<GoogleCalendarForm>(new GoogleCalendarForm(), GoogleCalendarForm.BuildForm, FormOptions.PromptInStart);
             context.Call(googleCalendarForm, googleCaleadarComplete);
-
-            
-
-
         }
 
         private async Task googleCaleadarComplete(IDialogContext context, IAwaitable<GoogleCalendarForm> result)
         {
             // 구글 캘린더 등록
+
+            // state에서 Google 토큰정보 꺼내옴 
+            // get state 
+            //HMBot.Models.GoogleToken tokenInfo = null;
+            //context.ConversationData.TryGetValue("GoogleTokenInfo", out tokenInfo);
+
+            //// test
+            var msg = context.MakeMessage();
+            var botCred = new MicrosoftAppCredentials(ConfigurationManager.AppSettings["MicrosoftAppId"], ConfigurationManager.AppSettings["MicrosoftAppPassword"]);
+            var stateClient = new StateClient(botCred);
+            BotState botState = new BotState(stateClient);
+
+            BotData userData = await stateClient.BotState.GetConversationDataAsync((msg.ChannelId == "emulator" ? "skype" : msg.ChannelId ), msg.Conversation.Id); 
+            var token = userData.GetProperty<GoogleToken>("GoogleTokenInfo");
+
+            if (token == null)
+            {
+                // 다시 로그인 
+                context.Call(new GoogleLoginDialog(), AfterLoginAsync);
+            }
+
+            // 서비스 호출
+            var service = new ICalEvent(token);
+            //service.InsertEvent();
 
             await context.PostAsync("일정등록을 완료하였습니다, 일정을 확인해주세요.");
 

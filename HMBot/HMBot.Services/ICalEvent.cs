@@ -8,8 +8,13 @@ using System.Threading.Tasks;
 using Google.Apis.Calendar.v3;
 using Google;
 using HMBot.Models;
+using HMBot.Services.Model;
+using Google.Apis.Services;
+using Google.Apis.Auth.OAuth2;
+using Google.Apis.Auth.OAuth2.Flows;
+using Google.Apis.Auth.OAuth2.Responses;
 
-namespace ICalTest
+namespace HMBot.Services
 {
     public class ICalEvent
     {
@@ -18,14 +23,46 @@ namespace ICalTest
 
         private CalendarService ICalService { get; set; }
 
-        public ICalEvent(CalendarService _Service)
-        {
-            this.ICalService = _Service;
-        }
+        //public ICalEvent(CalendarService _Service)
+        //{
+        //    this.ICalService = _Service;
+        //}
 
-        public ICalEvent(GoogleToken token)
+        public  ICalEvent(GoogleToken token)
         {
             // CalendarService 생성
+            var credential = CreateCredential(token);
+            var initializer = new BaseClientService.Initializer()
+            {
+                HttpClientInitializer = credential,
+                ApplicationName = "HM Bot",
+            };
+            ICalService = new CalendarService(initializer);
+        }
+
+        private UserCredential CreateCredential(GoogleToken _Token)
+        {
+            string[] scopes = new string[] {"CalendarService.Scope.Calendar"};
+            var initializer = new GoogleAuthorizationCodeFlow.Initializer
+            {
+                ClientSecrets = new ClientSecrets
+                {
+                    ClientId = _Token.ClientID,
+                    ClientSecret = _Token.ClientSecret
+                },
+                Scopes = scopes,
+            };
+            var flow = new GoogleAuthorizationCodeFlow(initializer);
+
+            var userId = _Token.UserID;
+
+            var token = new TokenResponse
+            {
+                AccessToken = _Token.AccessToken,
+                RefreshToken = _Token.RefreshToken
+            };
+
+            return new UserCredential(flow, userId, token);
         }
 
         /// <summary>
@@ -34,7 +71,7 @@ namespace ICalTest
         /// <param name="_Event"></param>
         public async Task InsertEvent(HMEvent _Event)
         {
-            Event iCalEvent  = _Event.CraeteICalEvent();
+            Event iCalEvent = _Event.CraeteICalEvent();
             try
             {
                 EventsResource.InsertRequest requestEvent = ICalService.Events.Insert(iCalEvent, C_CALENDAR_ID);
@@ -53,7 +90,7 @@ namespace ICalTest
             }
         }
 
-        
+
 
         public async Task<List<TimePeriod>> GetUserEvents(HMFreeBusy _HMFreeBusy)
         {

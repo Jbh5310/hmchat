@@ -19,6 +19,10 @@ namespace HMBot.Web
     internal static class GoogleClaimTypes
     {
         public const string GoogleUserId = "GoogleUserId";
+        public const string GoogleAccessToken = "GoogleAccessToken";
+        public const string GoogleRefreshToken = "GoogleRefreshToken";
+        public const string GoogleTokenIssuedAt = "GoogleTokenIssuedAt";
+        public const string GoogleTokenExpiresIn = "GoogleTokenExpiresIn";
     }
 
     internal static class GoogleRequestedScopes
