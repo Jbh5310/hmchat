@@ -15,6 +15,7 @@ using System.Configuration;
 using ICalTest;
 using HMBot.Services;
 using HMBot.Models;
+using HMBot.Services.Model;
 #pragma warning disable 649
 #pragma warning disable CS1998
 
@@ -89,10 +90,6 @@ namespace HMBot.Dialogs
                         break;
 
                     case ScheduleOption:
-
-                        break;
-
-                    case ScheduleOption:
                         await context.PostAsync("일정등록을 선택하셨습니다.");
                         // TODO: state 보고 로그인 되었는지 확인
                         // 지금은 확인하지 않고 로그인 메시지 띄움 
@@ -122,6 +119,11 @@ namespace HMBot.Dialogs
 
         private async Task googleCaleadarComplete(IDialogContext context, IAwaitable<GoogleCalendarForm> result)
         {
+
+
+            var re = await result;
+         
+
             // 구글 캘린더 등록
 
             // state에서 Google 토큰정보 꺼내옴 
@@ -135,7 +137,7 @@ namespace HMBot.Dialogs
             var stateClient = new StateClient(botCred);
             BotState botState = new BotState(stateClient);
 
-            BotData userData = await stateClient.BotState.GetConversationDataAsync((msg.ChannelId == "emulator" ? "skype" : msg.ChannelId ), msg.Conversation.Id); 
+            BotData userData = await stateClient.BotState.GetConversationDataAsync((msg.ChannelId == "emulator" ? "skype" : msg.ChannelId), msg.Conversation.Id);
             var token = userData.GetProperty<GoogleToken>("GoogleTokenInfo");
 
             if (token == null)
@@ -146,6 +148,19 @@ namespace HMBot.Dialogs
 
             // 서비스 호출
             var service = new ICalEvent(token);
+
+            HMEvent newEvent = new HMEvent();
+            newEvent.Subject = re.Title;
+            newEvent.StartDt = re.DateFrom;
+            newEvent.EndDt = re.DateTo;
+            newEvent.Location = re.Place;
+            newEvent.AddAttendd("jeipil@gmail.com");
+            newEvent.AddAttendd("hanmiitrnd@gmail.com");
+
+
+           await service.InsertEvent(newEvent);
+
+
             //service.InsertEvent();
 
             await context.PostAsync("일정등록을 완료하였습니다, 일정을 확인해주세요.");

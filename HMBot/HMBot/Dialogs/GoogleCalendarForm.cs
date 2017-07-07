@@ -19,6 +19,9 @@ using System.Configuration;
 using Microsoft.Bot.Builder.Luis.Models;
 using ICalTest.Model;
 using ICalTest;
+using HMBot.Services.Model;
+using HMBot.Services;
+using HMBot.Models;
 
 namespace HMBot.Dialogs
 {
@@ -85,16 +88,9 @@ namespace HMBot.Dialogs
 
                 state.DateTo = LuisResult2.Entities[0].Entity.Replace("년", "-") + "0" + LuisResult2.Entities[1].Entity.Replace("월", "-") + LuisResult2.Entities[2].Entity.Replace("일", "") + LuisResult2.Entities[3].Entity.Replace("시", "") + ":00";
 
-                //HMEvent newEvent = new HMEvent();
-                //newEvent.Subject = state.Title;
-                //newEvent.StartDt = state.DateFrom;
-                //newEvent.EndDt = state.DateTo;
-                //newEvent.Location = state.Place;
-                //newEvent.AddAttendd("jeipil@gmail.com");
-                //newEvent.AddAttendd("hanmiitrnd@gmail.com");
 
-                //ICalEvent iCal = new ICalEvent(service);
-                //iCal.InsertEvent(newEvent);
+
+           
 
 
 
