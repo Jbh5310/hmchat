@@ -12,5 +12,11 @@ namespace HMBot.Models
         public long? ExpiresInSeconds { get; set; }
         public string RefreshToken { get; set; }
         public DateTime Issued { get; set; }
+
+        public string ClientID { get; set; }
+        public string ClientSecret { get; set; }
+
+        public string UserID { get; set; }
+
     }
 }

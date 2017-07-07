@@ -62,6 +62,9 @@ namespace HMBot.Web.Controllers
                 RefreshToken = identity.FindFirstValue(GoogleClaimTypes.GoogleRefreshToken),
                 Issued = DateTime.FromBinary(long.Parse(identity.FindFirstValue(GoogleClaimTypes.GoogleTokenIssuedAt))),
                 ExpiresInSeconds = long.Parse(identity.FindFirstValue(GoogleClaimTypes.GoogleTokenExpiresIn)),
+                ClientID = GoogleClientSecrets.ClientId,
+                ClientSecret = GoogleClientSecrets.ClientSecret,
+                UserID = userId
             };
 
             // 여기서 Microsoft Bot Framework의 State에 토큰 정보를 저장. 
