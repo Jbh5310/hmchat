@@ -125,7 +125,7 @@ namespace HMBot.Dialogs
 
                 using (var client = new HttpClient())
                 {
-                    string uri = "https://westus.api.cognitive.microsoft.com/luis/v2.0/apps/c9d5cb47-ee4e-4e2f-b7a6-a9c0c1ee8054?subscription-key=2117fd4436f644ca94c87bdabd8ce2f3&timezoneOffset=0&verbose=true&q=" + strEscaped;
+                    string uri = "https://westus.api.cognitive.microsoft.com/luis/v2.0/apps/c9d5cb47-ee4e-4e2f-b7a6-a9c0c1ee8054?subscription-key=bf9dd7f227cb4d848a99b59aaae97599&timezoneOffset=0&verbose=true&q=" + strEscaped;
                     HttpResponseMessage msg = await client.GetAsync(uri);
 
                 if (msg.IsSuccessStatusCode)

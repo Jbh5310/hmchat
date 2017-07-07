@@ -60,6 +60,7 @@ namespace HMBot.Dialogs
                     {
                         await context.PostAsync(Internal.Responses.WelcomeBackMessage);
                     }
+                    
                     this.ShowOptions(context);
                     break;
                 default:
