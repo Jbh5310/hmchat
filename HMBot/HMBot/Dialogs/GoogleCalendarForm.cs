@@ -23,6 +23,7 @@ using HMBot.Services.Model;
 using HMBot.Services;
 using HMBot.Models;
 
+
 namespace HMBot.Dialogs
 {
 
@@ -30,7 +31,7 @@ namespace HMBot.Dialogs
     public class GoogleCalendarForm
     {
 
-        string asdf;
+
         // 4개의 Properties 
         // 1) 제목 
         [Describe("제목")]
@@ -66,18 +67,37 @@ namespace HMBot.Dialogs
         public string DateTo { get; set; }
 
 
+        // 5) 참석자
+        [Describe("참석자")]
+        [Prompt("참석자 Google E-Mail 입력해주세요. \n\n(예시:hanmiitrnd@gmail.com)")]
+
+        public string Attendd { get; set; }
+
+        
+
+
         public static IForm<GoogleCalendarForm> BuildForm()
         {
             OnCompletionAsyncDelegate<GoogleCalendarForm> processScheduleSearch = async (context, state) =>
             {
 
+                string reply;
 
 
+                 LuisResult LuisResult = await  ParseUserInput(state.DateFrom);
 
-                LuisResult LuisResult = await  ParseUserInput(state.DateFrom);
+                if (LuisResult.Entities.Count == 0)
+                {
+                    reply = "제가 이해할수없는 시작일시 입니다 .. 예제를 참고해 주세요!";
 
-             //   state.DateFrom = DateTime.Parse(LuisResult.Entities[0].Entity + LuisResult.Entities[1].Entity + LuisResult.Entities[2].Entity + LuisResult.Entities[3].Entity);
-                state.DateFrom =  LuisResult.Entities[0].Entity.Replace("년", "-") + "0" + LuisResult.Entities[1].Entity.Replace("월", "-") + LuisResult.Entities[2].Entity.Replace("일", "") + LuisResult.Entities[3].Entity.Replace("시", "") + ":00";
+                    await context.PostAsync(reply);
+                    
+                    return;
+                }
+
+
+                //   state.DateFrom = DateTime.Parse(LuisResult.Entities[0].Entity + LuisResult.Entities[1].Entity + LuisResult.Entities[2].Entity + LuisResult.Entities[3].Entity);
+                state.DateFrom =  LuisResult.Entities[0].Entity.Replace("년", "-")  + LuisResult.Entities[1].Entity.Replace("월", "-") + LuisResult.Entities[2].Entity.Replace("일", "") + LuisResult.Entities[3].Entity.Replace("시", "") + ":00";
 
                 state.DateFrom = DateTime.Parse(state.DateFrom).ToString();
 
@@ -86,11 +106,18 @@ namespace HMBot.Dialogs
 
                 LuisResult LuisResult2 = await ParseUserInput(state.DateTo);
 
-                state.DateTo = LuisResult2.Entities[0].Entity.Replace("년", "-") + "0" + LuisResult2.Entities[1].Entity.Replace("월", "-") + LuisResult2.Entities[2].Entity.Replace("일", "") + LuisResult2.Entities[3].Entity.Replace("시", "") + ":00";
+                if (LuisResult2.Entities.Count == 0)
+                {
+                    reply = "제가 이해할수없는 시작일시 입니다 .. 예제를 참고해 주세요!";
+
+                    await context.PostAsync(reply);
+                }
+
+                state.DateTo = LuisResult2.Entities[0].Entity.Replace("년", "-")  + LuisResult2.Entities[1].Entity.Replace("월", "-") + LuisResult2.Entities[2].Entity.Replace("일", "") + LuisResult2.Entities[3].Entity.Replace("시", "") + ":00";
+                state.DateTo = DateTime.Parse(state.DateTo).ToString();
 
 
 
-           
 
 
 
@@ -100,7 +127,10 @@ namespace HMBot.Dialogs
                 .Field(nameof(Title))
                 .Field(nameof(Place))
                 .Field(nameof(DateFrom))
-                .Field(nameof(DateTo),
+                .Field(nameof(DateTo))
+                .Field(nameof(Attendd),
+
+
                     validate: async (state, response) =>
                     {
                         //모든 날짜 포멧을 yyyy-MM-dd 형식으로 변환하여 전송
@@ -125,8 +155,14 @@ namespace HMBot.Dialogs
 
                 using (var client = new HttpClient())
                 {
-                    string uri = "https://westus.api.cognitive.microsoft.com/luis/v2.0/apps/c9d5cb47-ee4e-4e2f-b7a6-a9c0c1ee8054?subscription-key=2117fd4436f644ca94c87bdabd8ce2f3&timezoneOffset=0&verbose=true&q=" + strEscaped;
-                    HttpResponseMessage msg = await client.GetAsync(uri);
+                //  string uri = "https://westus.api.cognitive.microsoft.com/luis/v2.0/apps/c9d5cb47-ee4e-4e2f-b7a6-a9c0c1ee8054?subscription-key=2117fd4436f644ca94c87bdabd8ce2f3&timezoneOffset=0&verbose=true&q=" + strEscaped;
+
+                //string uri = "https://westus.api.cognitive.microsoft.com/luis/v2.0/apps/c9d5cb47-ee4e-4e2f-b7a6-a9c0c1ee8054?subscription-key=08be1f5e501a48f6bd2223be88c1a47a&timezoneOffset=0&verbose=true&q=" + strEscaped;
+
+                //20170807 최신 ver
+                string uri = "https://westus.api.cognitive.microsoft.com/luis/v2.0/apps/c9d5cb47-ee4e-4e2f-b7a6-a9c0c1ee8054?subscription-key=c246ad9b4d944befaec48cf771a5586b&timezoneOffset=0&verbose=true&q=" + strEscaped;
+
+                HttpResponseMessage msg = await client.GetAsync(uri);
 
                 if (msg.IsSuccessStatusCode)
                 {

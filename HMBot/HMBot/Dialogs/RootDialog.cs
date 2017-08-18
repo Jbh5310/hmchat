@@ -143,6 +143,7 @@ namespace HMBot.Dialogs
             if (token == null)
             {
                 // 다시 로그인 
+
                 context.Call(new GoogleLoginDialog(), AfterLoginAsync);
             }
 
@@ -154,6 +155,7 @@ namespace HMBot.Dialogs
             newEvent.StartDt = re.DateFrom;
             newEvent.EndDt = re.DateTo;
             newEvent.Location = re.Place;
+            newEvent.AddAttendd(re.Attendd);
             newEvent.AddAttendd("jeipilh@gmail.com");
             newEvent.AddAttendd("hanmiitrnd@gmail.com");
 
